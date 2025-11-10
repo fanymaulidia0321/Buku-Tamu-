@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buku Tamu Digital</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background-color: #eef2ff;
+      color: #222;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #1e3a8a;
+      color: white;
+      text-align: center;
+      padding: 20px 0;
+      font-size: 1.4em;
+      font-weight: 600;
+    }
+    main {
+      max-width: 700px;
+      margin: 40px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-family: inherit;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: #1e3a8a;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background-color: #3b82f6;
+    }
+    .print-btn {
+      background-color: #15803d;
+    }
+    .print-btn:hover {
+      background-color: #22c55e;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 25px;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+    th {
+      background-color: #1e3a8a;
+      color: white;
+    }
+    footer {
+      text-align: center;
+      color: #555;
+      font-size: 0.9em;
+      margin-top: 30px;
+    }
+
+    /* styling khusus untuk saat print */
+    @media print {
+      button, header, footer {
+        display: none;
+      }
+      main {
+        box-shadow: none;
+        border: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>📖 Buku Tamu Digital</header>
+
+  <main>
+    <h3>Isi Buku Tamu</h3>
+    <label>Nama:</label>
+    <input type="text" id="nama" placeholder="Masukkan nama..." />
+
+    <label>Asal:</label>
+    <input type="text" id="asal" placeholder="Masukkan asal (sekolah / instansi)..." />
+
+    <label>Keperluan:</label>
+    <textarea id="keperluan" rows="3" placeholder="Tulis keperluan kedatangan..."></textarea>
+
+    <button onclick="tambahData()">Simpan</button>
+    <button class="print-btn" onclick="window.print()">🖨️ Cetak Data Tamu</button>
+
+    <table id="tabelTamu">
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Nama</th>
+          <th>Asal</th>
+          <th>Keperluan</th>
+          <th>Waktu</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </main>
+
+  <script>
+    let tamuList = JSON.parse(localStorage.getItem("bukuTamu")) || [];
+
+    function simpanData() {
+      localStorage.setItem("bukuTamu", JSON.stringify(tamuList));
+    }
+
+    function tampilkanData() {
+      const tbody = document.querySelector("#tabelTamu tbody");
+      tbody.innerHTML = "";
+      tamuList.forEach((item, index) => {
+        const row = tbody.insertRow();
+        row.insertCell(0).textContent = index + 1;
+        row.insertCell(1).textContent = item.nama;
+        row.insertCell(2).textContent = item.asal;
+        row.insertCell(3).textContent = item.keperluan;
+        row.insertCell(4).textContent = item.waktu;
+      });
+    }
+
+    function tambahData() {
+      const nama = document.getElementById("nama").value.trim();
+      const asal = document.getElementById("asal").value.trim();
+      const keperluan = document.getElementById("keperluan").value.trim();
+
+      if (nama === "" || asal === "" || keperluan === "") {
+        alert("Harap isi semua kolom terlebih dahulu!");
+        return;
+      }
+
+      const waktu = new Date().toLocaleString("id-ID");
+      tamuList.push({ nama, asal, keperluan, waktu });
+      simpanData();
+      tampilkanData();
+
+      document.getElementById("nama").value = "";
+      document.getElementById("asal").value = "";
+      document.getElementById("keperluan").value = "";
+    }
+
+    tampilkanData();
+  </script>
+</body>
+  </html>
